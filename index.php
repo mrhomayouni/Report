@@ -13,7 +13,12 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
     $time_ends = $_POST["time_end"];
     $time_teaches = $_POST["time_teach"];
     $descriptions = $_POST["description"];
-    $ok = add_repoets($user["id"], $time_starts, $time_ends, $time_teaches, $descriptions);
+    $ok = add_reports($user["id"], $time_starts, $time_ends, $time_teaches, $descriptions);
+}
+if (isset($_POST["change_password"], $_POST["new_password"], $_POST["new_password_repeat"])) {
+    $new_password = trim($_POST["new_password"]);
+    $new_password_repeat = trim($_POST["new_password_repeat"]);
+    $change_password = change_password($user["id"], $new_password, $new_password_repeat);
 }
 
 ?>
@@ -201,13 +206,14 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
 <header>
     <div class="container d-flex align-items-center justify-content-center flex-column">
         <img class="mb-2" src="logo.png" alt="" width="100px">
-        <h3 class="display-5">سلام <?= trim($user["first_name"] . " " . $user["last_name"]) ?>!</h3>
+        <h3 class="display-5">
+            سلام <?php
+            echo ($user["gender"] == 0) ? "اقای " : "خانم ";
+            echo trim($user["first_name"] . " " . $user["last_name"]);
+            ?>
+            !</h3>
         <p class="mt-4">
-            یک فرد موفق کسی است که می‌تواند با آجر‌هایی که دیگران به سمت او پرتاب کرده‌اند، پایه و اساس محکمی برای خود
-            بنا کند.
-            <b>
-                دیوید برینکلی؛ فیلمنامه‌نویس
-            </b>
+            <?= motivational_sentence() ?>
         </p>
         <p>
             <a class="btn btn-primary btn-sm" href="logout.php" role="button">خروج</a>
@@ -217,13 +223,13 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
 
 <main class="container">
     <form action="" method="POST">
-        <h1 class="h3 mb-3 fw-normal">ثبت گزارش</h1>
+        <h2 class="h3 mb-3 fw-normal">ثبت گزارش</h2>
         <?php if (isset($ok) && $ok === true) { ?>
 
             <div class="alert alert-success" role="alert">
                 گزارش با موفقیت ثبت شد.
             </div>
-
+            <?php echo ($a > 0) ? ("a") : ("0"); ?>
         <?php } ?>
         <?php if (isset($ok) && $ok !== true) { ?>
 
@@ -239,11 +245,43 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
             <span>+</span>
         </div>
 
-        <button name="submit" class="w-100 btn btn-lg btn-primary" type="submit">
+        <button name="submit" class="w-100 btn btn-lg btn-primary mt-4 mb-4" type="submit">
             ذخیره
         </button>
-        <p class="mt-5 mb-3 text-muted text-center"> © تولید اسرز با عشق 2022</p>
     </form>
+    <h2 class="h3 mb-3 fw-normal">تغییر رمز عبور</h2>
+    <?php if (isset($change_password) && $change_password === true) { ?>
+
+        <div class="alert alert-success" role="alert">
+            رمز عبور با موفقیت تغییر کرد.
+        </div>
+
+    <?php } ?>
+    <?php if (isset($change_password) && $change_password !== true) { ?>
+
+        <div class="alert alert-warning" role="alert">
+            <?= $change_password ?>
+        </div>
+    <?php } ?>
+
+    <div class="card" style="padding: 16px">
+        <form action="" method="POST">
+            <div class="mb-3">
+                <label class="form-label">رمز جدید</label>
+                <input name="new_password" type="text" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label class="form-label">تکرار رمز جدید</label>
+                <input name="new_password_repeat" type="text" class="form-control">
+            </div>
+            <button name="change_password" class="w-100 btn btn-lg btn-primary mt-4 mb-4" type="submit">
+                تغییر
+            </button>
+
+        </form>
+    </div>
+    <p class="mt-5 mb-3 text-muted text-center"> © تولید اسرز با عشق 2022</p>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
@@ -454,7 +492,7 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
                 </div>
                 <div class="mb-3">
                     <label class="form-label">زمان تدریس</label>
-                    <input name="time_teach[]" type="text" class="form-control time-picker">
+                    <input name="time_teach[]" type="text" class="form-control time-picker" value="00:00">
                 </div>
                 <div class="mb-3">
                     <label for="descriptionInput" class="form-label">گزارش فعالیت</label>
