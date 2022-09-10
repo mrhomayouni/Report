@@ -81,14 +81,33 @@ function change_password($user_id, $new_password, $new_password_repeat): bool|st
 
             $sql = "UPDATE `user` SET `password`=:new_password WHERE `id`=:id";
             $stmt = $db->prepare($sql);
-            $stmt->bindParam("id", $user_id);
-            $stmt->bindParam("new_password", $new_password);
+            $stmt->bindValue("id", $user_id);
+            $stmt->bindValue("new_password", md5($new_password));
             $stmt->execute();
             return true;
         }
     }
 
 }
+
+function add_to_archive($type, $description, $file_name)
+{
+    global $db;
+
+    $sql = "INSERT INTO `archive`(`type`, `file_name`, `description`) 
+VALUES (:type,:file_name,:description);";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("type", $type);
+    $stmt->bindValue("file_name", $file_name);
+    $stmt->bindValue("description", $description);
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطا در اپلود فایل";
+    }
+
+}
+
 
 function motivational_sentence()
 {
@@ -143,7 +162,6 @@ function motivational_sentence()
 
     $motivational_sentence = explode("\n", $motivational_sentence);
     echo $motivational_sentence[array_rand($motivational_sentence)];
-
 }
 
 ///////

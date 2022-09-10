@@ -217,6 +217,7 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["new_passwor
         </p>
         <p>
             <a class="btn btn-primary btn-sm" href="logout.php" role="button">خروج</a>
+            <a class="btn btn-primary btn-sm" href="archive.php" role="button">بایگانی</a>
         </p>
     </div>
 </header>
@@ -229,15 +230,14 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["new_passwor
             <div class="alert alert-success" role="alert">
                 گزارش با موفقیت ثبت شد.
             </div>
-            <?php echo ($a > 0) ? ("a") : ("0"); ?>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+            <?php if (isset($ok) && $ok !== true) { ?>
 
-            <div class="alert alert-warning" role="alert">
-                <?= $ok ?>
-            </div>
+                <div class="alert alert-warning" role="alert">
+                    <?php echo $ok ?>
+                </div>
 
-        <?php } ?>
+            <?php }
+        } ?>
 
 
         <div class="reports"></div>
