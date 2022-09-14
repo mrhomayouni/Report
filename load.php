@@ -4,15 +4,23 @@ require "db.php";
 
 session_start();
 
+date_default_timezone_set('asia/tehran');
+
 function redirect($path)
 {
-    header("Location: " . $path);
+    header("Location:" . $path);
     exit();
+}
+
+function Is_File0($path)
+{
+    if (basename($_SERVER["SCRIPT_NAME"]) === $path) return true;
 }
 
 function get_user_by_password(string $username, string $password): ?array
 {
     global $db;
+
     $sql = "SELECT `id` FROM `user` WHERE `username`=:username AND `password`=:password ;";
     $stmt = $db->prepare($sql);
     $stmt->bindParam("username", $username);
@@ -69,27 +77,6 @@ function add_report($user_id, $time_start, $time_end, $time_teach, $description)
     $stmt->execute();
 }
 
-function change_password($user_id, $new_password, $new_password_repeat): bool|string
-{
-    if ($new_password === "" && $new_password_repeat === "") {
-        return "خطا!! رمز عبور یا تکرار رمز عبور خالی است. ";
-    } else {
-        if ($new_password !== $new_password_repeat) {
-            return "خطا!! رمز عبور و تکرار ان باهم برابر نیستند. ";
-        } else {
-            global $db;
-
-            $sql = "UPDATE `user` SET `password`=:new_password WHERE `id`=:id";
-            $stmt = $db->prepare($sql);
-            $stmt->bindValue("id", $user_id);
-            $stmt->bindValue("new_password", md5($new_password));
-            $stmt->execute();
-            return true;
-        }
-    }
-
-}
-
 function add_to_archive($type, $description, $file_name)
 {
     global $db;
@@ -105,7 +92,136 @@ VALUES (:type,:file_name,:description);";
     } else {
         return "خطا در اپلود فایل";
     }
+}
 
+function get_archives()
+{
+    global $db;
+
+    $sql = "SELECT * FROM `archive`";
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $archives = $stmt->fetchAll();
+    if (count($archives) > 0) {
+        return $archives;
+    } else {
+        return false;
+    }
+}
+
+function change_Specifications($user_id, $username, $first_name, $last_name)
+{
+    global $db;
+
+    $sql = "UPDATE `user` SET `username`=:username,`first_name`=:first_name,`last_name`=:last_name WHERE `id`=:id;";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("id", $user_id);
+    $stmt->bindValue("username", $username);
+    $stmt->bindValue("first_name", $first_name);
+    $stmt->bindValue("last_name", $last_name);
+    if ($stmt->execute()) {
+        return true;
+    }
+}
+
+function change_password($user_id, $new_password): bool|string
+{
+    global $db;
+
+    $sql = "UPDATE `user` SET `password`=:new_password WHERE `id`=:id";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("id", $user_id);
+    $stmt->bindValue("new_password", md5($new_password));
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطادر تغییر رمز عبور";
+    }
+}
+
+function add_letter($type, $recipient, $title, $body): bool|string
+{
+    global $db;
+
+    $date = time();
+    $sql = "INSERT INTO `letter`(`type`, `recipient`, `title`, `body`, `annex`, `date`)
+ VALUES (:type, :recipient, :title, :body, :annex, :date)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("type", $type);
+    $stmt->bindValue("recipient", $recipient);
+    $stmt->bindValue("title", $title);
+    $stmt->bindValue("body", $body);
+    $stmt->bindValue("annex", rand(100, 999));
+    $stmt->bindValue("date", $date);
+    if ($stmt->execute()) {
+        return true;
+    } else return "خطا در ثبت اطلاعات";
+}
+
+function get_letters(): bool|array
+{
+    global $db;
+
+    $sql = "SELECT * FROM `letter`;";
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $letter = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (count($letter) > 0) {
+        return $letter;
+    } else {
+        return false;
+    }
+}
+
+function get_letter_by_id($id)
+{
+    global $db;
+
+    $sql = "SELECT * FROM `letter` WHERE `id`=:id;";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("id", $id);
+    $stmt->execute();
+    $letter = $stmt->fetch(PDO::FETCH_ASSOC);
+    return $letter;
+}
+
+
+function add_vacation($user_id, $date, $type, $duration, $description)
+{
+    global $db;
+
+    $created_at = time();
+
+    $sql = "INSERT INTO `vacation`( `user_id`, `date`, `type`, `duration`, `description`, `created_at`) 
+VALUES (:user_id, :date, :type, :duration, :description, :created_at)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("user_id", $user_id);
+    $stmt->bindValue("date", $date);
+    $stmt->bindValue("type", $type);
+    $stmt->bindValue("duration", $duration);
+    $stmt->bindValue("description", $description);
+    $stmt->bindValue("created_at", $created_at);
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطا در ثبت مرخصی";
+    }
+}
+
+function get_vacation($user_id)
+{
+    global $db;
+
+    $sql = "SELECT * FROM `vacation` WHERE `user_id` = :id;";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("id", $user_id);
+    $stmt->execute();
+    $vacation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (count($vacation) < 1) {
+        return false;
+    } else {
+        return $vacation;
+    }
 }
 
 
@@ -172,4 +288,11 @@ if ($is_auth === true) {
     $user = get_user_by_id($_SESSION["user_id"]);
 } else {
     $is_auth = false;
+}
+if (isset($user)) {
+    if ($user["admin"] === 1) {
+        $is_admin = true;
+    } else {
+        $is_admin = false;
+    }
 }

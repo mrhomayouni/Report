@@ -1,11 +1,13 @@
 <?php
 require "load.php";
 
+require "header.php";
+
+if (!$is_admin) redirect("index.php");
 if (isset($_POST["submit_arc"], $_POST["type"], $_POST["description"])) {
-    if ($_FILES["file"]["size"] === 0) {
+    if ($_FILES["file"]["name"] === "") {
         $ok = "خطا!! فایلی انتخاب نشده است";
     } else {
-
         $type = $_POST["type"];
         $description = trim($_POST["description"]);
         $file_name = rand(100000, 999999) . rand(100000, 999999) . $_FILES["file"]["name"];
@@ -17,58 +19,98 @@ if (isset($_POST["submit_arc"], $_POST["type"], $_POST["description"])) {
         } else {
             $ok = "خطایی در آپلود فایل یه وجود امده است";
         }
+
     }
 }
+$files = get_archives();
 ?>
-<!doctype html>
-<html lang="fa_IR" dir="rtl">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>کارمن - ورود</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="generator" content="KareMan">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.rtl.min.css"
-          integrity="sha384-+4j30LffJ4tgIMrq9CwHvn0NjEvmuDCOfk6Rpg2xg7zgOxWWtLtozDEEVvBPgHqE" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>آرشیو</title>
 </head>
+<body>
+<main class="container">
 
-<form method="POST" enctype="multipart/form-data">
-    <fieldset>
-        <legend>ثبت پرونده</legend>
-        <?php if (isset($ok) && $ok === true) { ?>
+    <h2 class="h3 mb-3 fw-normal">ثبت پرونده</h2>
+    <div class="card" style="padding: 16px;margin: 10px">
 
-            <div class="alert alert-success" role="alert">
-                با موفقیت ثبت شد.
-            </div>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+        <form method="POST" enctype="multipart/form-data">
+            <fieldset>
+                <?php if (isset($ok) && $ok === true) { ?>
 
-            <div class="alert alert-warning" role="alert">
-                <?= $ok ?>
-            </div>
+                    <div class="alert alert-success" role="alert">
+                        با موفقیت ثبت شد.
+                    </div>
+                <?php } ?>
+                <?php if (isset($ok) && $ok !== true) { ?>
 
-        <?php } ?>
+                    <div class="alert alert-warning" role="alert">
+                        <?= $ok ?>
+                    </div>
 
-        <div class="mb-3">
-            <label class="form-label">نوع</label>
-            <select class="form-select" name="type">
-                <option value="interview">مصاحبه</option>
-                <option value="Report">گزارش</option>
-                <option value="Contract">قرارداد</option>
-                <option value="Other">متفرقه</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">فایل</label>
-            <input name="file" type="file" class="form-control" placeholder="نوع فایل">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">توضیح</label>
-            <input name="description" type="text" class="form-control" placeholder="توضیح فایل">
-        </div>
-        <button name="submit_arc" type="submit" class="btn btn-primary">Submit</button>
-    </fieldset>
-</form>
+                <?php } ?>
+
+                <div class="mb-3">
+                    <label class="form-label">نوع <font style="color: red">*</font> </label>
+                    <select class="form-select" name="type">
+                        <option value="interview">مصاحبه</option>
+                        <option value="Report">گزارش</option>
+                        <option value="Contract">قرارداد</option>
+                        <option value="Other">متفرقه</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">فایل <font style="color: red">*</font></label>
+                    <input name="file" type="file" class="form-control" placeholder="نوع فایل">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">توضیح <font style="color: red">*</font></label>
+                    <textarea name="description" cols="150" rows="10" class="form-control"
+                              placeholder="توضیح فایل"></textarea>
+                </div>
+            </fieldset>
+    </div>
+    <button name="submit_arc" type="submit" class="btn btn-primary mb-4">ذخیره</button>
+    </form>
+    <table class="table table-striped" style="border-style: solid">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">نوع</th>
+            <th scope="col">توضیح</th>
+            <th scope="col">پیوست</th>
+            <th scope="col">مدیریت</th>
+
+        </tr>
+        </thead>
+        <tbody>
+        <?php if ($files === false) { ?>
+            <div> داده ای برای نمایش وجود ندارد</div>
+
+        <?php } else { ?>
+            <?php foreach ($files as $file) { ?>
+                <tr>
+                    <th scope="row"><?= $file["id"] ?></th>
+                    <td><?= $file["type"] ?></td>
+                    <td><?= $file["description"] ?></td>
+                    <td><a href="files/<?= $file["file_name"] ?>" target="_blank">
+                            <?php if (str_ends_with($file["file_name"], ".jpg") ||
+                                str_ends_with($file["file_name"], ".png") ||
+                                str_ends_with($file["file_name"], ".bmp") ||
+                                str_ends_with($file["file_name"], ".gif")) { ?>
+                                <img src="files/<?= $file["file_name"] ?>" width="150" height="150">
+                            <?php } else { ?>
+                                <?= $file["file_name"] ?>
+                            <?php } ?>
+                        </a></td>
+                    <td><?= $file["id"] ?></td>
+                </tr>
+            <?php }
+        } ?>
+        </tbody>
+    </table>
+
+</main>
+</body>

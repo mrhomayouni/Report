@@ -7,7 +7,7 @@ if (isset($_SESSION["user_id"])) {
 
 if (isset($_POST["submit"], $_POST["username"], $_POST["password"])) {
     $username = trim($_POST["username"]);
-    $password = trim($_POST["password"]);
+    $password = md5(trim($_POST["password"]));
     $user = get_user_by_password($username, $password);
     if ($user === null) $error = true;
     else {
@@ -24,7 +24,7 @@ if (isset($_POST["submit"], $_POST["username"], $_POST["password"])) {
 <html lang="fa_IR" dir="rtl">
 <head>
     <meta charset="utf-8">
-    <title>کارمن - ورود</title>
+    <title>کارمن-ورود</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">

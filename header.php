@@ -1,16 +1,11 @@
 <?php
-require "load.php";
-require "header.php";
-
-redirect("index.php");
-
+//require "load.php";
 ?>
 
 <!doctype html>
 <html lang="fa_IR" dir="rtl">
 <head>
     <meta charset="utf-8">
-    <title>کارمن - ورود</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
@@ -185,20 +180,45 @@ redirect("index.php");
     </style>
 </head>
 <body>
-<div class="card" style="padding: 16px;margin: 10px">
-    <form action="" method="POST">
-        <div class="mb-3">
-            <label class="form-label">رمز جدید</label>
-            <input name="new_password" type="text" class="form-control">
-        </div>
-        <div class="mb-3">
-            <label class="form-label">تکرار رمز جدید</label>
-            <input name="new_password_repeat" type="text" class="form-control">
-        </div>
-        <button name="change_password" class="w-100 btn btn-lg btn-primary mt-4 mb-4" type="submit">
-            تغییر
-        </button>
-
-    </form>
-</div>
+<header>
+    <div class="container d-flex align-items-center justify-content-center flex-column">
+        <a href="index.php"> <img class="mb-2" src="logo.png" alt="" width="100px"></a>
+        <h3 class="display-5">
+            سلام <?php
+            echo ($user["gender"] == 0) ? "اقای " : "خانم ";
+            echo $user["first_name"] . " " . $user["last_name"];
+            ?>
+            !</h3>
+        <p class="mt-4">
+            <?= motivational_sentence() ?>
+        </p>
+        <p>
+            <a class="btn btn-primary btn-sm" href="logout.php"
+               role="button">خروج
+            </a>
+            <?php if ($is_admin) { ?>
+                <a
+                        class="btn btn-primary <?php if (Is_File0("archive.php")) { ?> btn-warning <?php } ?> btn-sm"
+                        href="archive.php"
+                        role="button">بایگانی
+                </a> <?php } ?>
+            <a class="btn  btn-primary <?php if (Is_File0("add_reports.php")) { ?> btn-warning <?php } ?> btn-sm"
+               href="add_reports.php"
+               role="button">ثبت گزارش
+            </a>
+            <a class="btn btn-primary <?php if (Is_File0("edit_profile.php")) { ?> btn-warning <?php } ?> btn-sm"
+               href="edit_profile.php"
+               role="button">پروفایل
+            </a>
+            <a class="btn btn-primary <?php if (Is_File0("Letter.php")) { ?> btn-warning <?php } ?> btn-sm"
+               href="Letter.php"
+               role="button">نامه
+            </a>
+            <a class="btn btn-primary <?php if (Is_File0("vacation.php")) { ?> btn-warning <?php } ?> btn-sm"
+               href="vacation.php"
+               role="button">مرخصی
+            </a>
+        </p>
+    </div>
+</header>
 </body>
