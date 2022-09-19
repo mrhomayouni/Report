@@ -21,7 +21,7 @@ function get_user_by_password(string $username, string $password): ?array
 {
     global $db;
 
-    $sql = "SELECT `id` FROM `user` WHERE `username`=:username AND `password`=:password ;";
+    $sql = "SELECT `id` FROM `user` WHERE `username` = :username AND `password` = :password ;";
     $stmt = $db->prepare($sql);
     $stmt->bindParam("username", $username);
     $stmt->bindParam("password", $password);
@@ -208,11 +208,26 @@ VALUES (:user_id, :date, :type, :duration, :description, :created_at)";
     }
 }
 
+function get_all_vacation()
+{
+    global $db;
+
+    $sql = "SELECT * FROM `vacation` ORDER BY `id` DESC;";
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $vacation = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    if (count($vacation) < 1) {
+        return false;
+    } else {
+        return $vacation;
+    }
+}
+
 function get_vacation($user_id)
 {
     global $db;
 
-    $sql = "SELECT * FROM `vacation` WHERE `user_id` = :id;";
+    $sql = "SELECT * FROM `vacation` WHERE `user_id` = :id ORDER BY `id` DESC;";
     $stmt = $db->prepare($sql);
     $stmt->bindValue("id", $user_id);
     $stmt->execute();
@@ -222,6 +237,25 @@ function get_vacation($user_id)
     } else {
         return $vacation;
     }
+}
+
+function change_vacation($id, $status)
+{
+    global $db;
+
+    $sql = "UPDATE `vacation` SET `status`=:status WHERE `id`=:id;";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("id", $id);
+    $stmt->bindValue("status", $status);
+    $stmt->execute();
+}
+
+function change_vacation_to_displayed()
+{
+    global $db;
+    $sql = "UPDATE `vacation` SET `status` = 0 WHERE `status` = 3;";
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
 }
 
 

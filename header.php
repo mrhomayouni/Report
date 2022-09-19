@@ -218,6 +218,10 @@
                href="vacation.php"
                role="button">مرخصی
             </a>
+            <a class="btn btn-primary <?php if (Is_File0("question.php")) { ?> btn-warning <?php } ?> btn-sm"
+               href="question.php"
+               role="button">سوالات
+            </a>
         </p>
     </div>
 </header>

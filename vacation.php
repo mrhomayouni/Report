@@ -3,23 +3,42 @@ require "load.php";
 require "header.php";
 if (!isset($user)) {
     redirect("load.php");
-} else {
-    if (isset($_POST["submit"], $_POST["type"], $_POST["type"], $_POST["duration"], $_POST["description"])) {
-        $date = trim($_POST["date"]);
-        $type = trim($_POST["type"]);
-        $duration = trim($_POST["duration"]);
-        $description = trim($_POST["description"]);
-        if ($date === "" ||
-            $type === "" ||
-            $duration === "" ||
-            $description === "") {
-            $error = "خطا!! فیلد خالی مجاز نیست";
-        } else {
-            $error = add_vacation($user["id"], $date, $type, $duration, $description);
-        }
+}
+
+if ($is_admin && isset($_GET["status"], $_GET["id"])) {
+    $status = $_GET["status"];
+    $vacation_id = $_GET["id"];
+
+    if ($status == "accept") {
+        change_vacation($vacation_id, 1);
+    } elseif ($status == "reject") {
+        change_vacation($vacation_id, 2);
     }
+}
+
+if (isset($_POST["submit"], $_POST["type"], $_POST["type"], $_POST["duration"], $_POST["description"])) {
+    $date = trim($_POST["date"]);
+    $type = trim($_POST["type"]);
+    $duration = trim($_POST["duration"]);
+    $description = trim($_POST["description"]);
+    if ($date === "" ||
+        $type === "" ||
+        $duration === "" ||
+        $description === "") {
+        $error = "خطا!! فیلد خالی مجاز نیست";
+    } else {
+        $error = add_vacation($user["id"], $date, $type, $duration, $description);
+    }
+}
+
+if ($is_admin) {
+    $vacations = get_all_vacation();
+    change_vacation_to_displayed();
+
+} else {
     $vacations = get_vacation($user["id"]);
 }
+
 
 ?>
 
@@ -43,6 +62,9 @@ if (!isset($user)) {
             <th scope="col">شرح</th>
             <th scope="col">زمان درخواست</th>
             <th scope="col">وضعیت</th>
+            <?php if ($is_admin) { ?>
+                <th scope="col">مدیریت</th>
+            <?php } ?>
         </tr>
         </thead>
         <tbody>
@@ -51,9 +73,11 @@ if (!isset($user)) {
         } else {
             foreach ($vacations as $vacation) { ?>
                 <tr style="background-color:
-                <?php if ($vacation["status"] === 0) { ?> #decf2a <?php } ?>
-                <?php if ($vacation["status"] === 1) { ?> #40e612 <?php } ?>
-                <?php if ($vacation["status"] === 2) { ?> #de2a2a <?php } ?>
+                <?php if ($vacation["status"] === 0) { ?> #decf2a
+                <?php } elseif ($vacation["status"] === 1) { ?> #40e612
+                <?php } elseif ($vacation["status"] === 2) { ?> #de2a2a
+                <?php } elseif ($vacation["status"] === 3) { ?> #42e9f5 <?php }
+                ?>
                         ;">
                     <td><?php echo get_user_by_id($vacation["user_id"])["first_name"] . " " . get_user_by_id($vacation["user_id"])["last_name"] ?></td>
                     <td><?= $vacation["date"] ?></td>
@@ -62,13 +86,29 @@ if (!isset($user)) {
                     <td><?= $vacation["description"] ?></td>
                     <td><?= date("h:i - y/m/d", $vacation["created_at"]) ?></td>
                     <td><?php
-                        if ($vacation["status"] === 0) echo "در انتظار برسی";
-                        if ($vacation["status"] === 1) echo "تایید شده";
-                        if ($vacation["status"] === 2) echo "رد شده";
+                        if ($vacation["status"] === 0) {
+                            echo "مشاهده شده";
+                        } elseif
+                        ($vacation["status"] === 1) {
+                            echo "تایید شده";
+                        } elseif ($vacation["status"] === 2) {
+                            echo "رد شده";
+                        } elseif ($vacation["status"] === 3) {
+                            echo "در حال برسی";
+                        }
 
                         ?></td>
+                    <?php if ($is_admin) { ?>
+                        <td scope="col">
+                            <a href="vacation.php?status=accept&id=<?= $vacation["id"] ?>" class="btn btn-info"
+                               style=""> تایید</a>
+                            <a href="vacation.php?status=reject&id=<?= $vacation["id"] ?>" class="btn btn-info"
+                               style=""> رد</a>
+                        </td>
+                    <?php } ?>
                 </tr>
-            <?php }
+                <?php
+            }
         } ?>
         </tbody>
     </table>
@@ -92,7 +132,7 @@ if (!isset($user)) {
             <div class="mb-3 col-4">
                 <label for="date-picker1" class="form-label">تاریخ <font color="red">*</font></label>
                 <input name="date" id="date-picker1" type="text" class="form-control date-picker" required=""
-                       pattern="[0-9]{4}/[0-9]{2}/[0-9]{2}" value="1401/06/23">
+                        value="<?= date("y/m/d") ?>">
             </div>
             <div class="mb-3 col-4">
                 <label class="form-label">نوع <font color="red">*</font></label>
