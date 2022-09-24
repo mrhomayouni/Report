@@ -22,7 +22,7 @@ $letters = get_letters();
 <head>
     <meta charset="UTF-8">
     <title>کارمن - نامه</title>
-    </head>
+</head>
 <body>
 <main class="container">
     <form action="" method="POST" class="mt-4" enctype="multipart/form-data">
@@ -94,8 +94,8 @@ $letters = get_letters();
                 <tr>
                     <th scope="row"><?= $letter["id"] ?></th>
                     <td><?= $letter["type"] ?></td>
-                    <td> <p style="max-width: 100px"><?= $letter["recipient"] ?> </p></td>
-                    <td> <p style="max-width: 100px"> <?= $letter["title"] ?></p></td>
+                    <td><p style="max-width: 100px"><?= $letter["recipient"] ?> </p></td>
+                    <td><p style="max-width: 100px"> <?= $letter["title"] ?></p></td>
                     <td><p style="max-width: 400px"> <?= $letter["body"] ?></p></td>
                     <td><a href="files/<?= $letter["annex"] ?>" target="_blank">
                             <?php if (str_ends_with($letter["annex"], ".jpg") ||

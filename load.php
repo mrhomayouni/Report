@@ -1,12 +1,14 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 require "db.php";
 
 session_start();
 
 date_default_timezone_set('asia/tehran');
 
-function redirect($path)
+#[NoReturn] function redirect($path)
 {
     header("Location:" . $path);
     exit();
@@ -258,6 +260,104 @@ function change_vacation_to_displayed()
     $stmt->execute();
 }
 
+function add_question_with_file($title, $body, $user_id, $category, $Priority, $file_name)
+{
+    global $db;
+    $sql = "INSERT INTO `question`(`title`, `body`, `user_id`, `category`, `Priority`, `file_name`) 
+VALUES (:title, :body, :user_id, :category, :Priority, :file_name)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("title", $title);
+    $stmt->bindValue("body", $body);
+    $stmt->bindValue("user_id", $user_id);
+    $stmt->bindValue("category", $category);
+    $stmt->bindValue("Priority", $Priority);
+    $stmt->bindValue("file_name", $file_name);
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطا در ثبت سوال";
+    }
+}
+
+function add_question_without_file($title, $body, $user_id, $category, $Priority)
+{
+    global $db;
+
+    $date = time();
+    $sql = "INSERT INTO `question`(`title`, `body`, `user_id`, `category`, `Priority`, `date`) 
+VALUES (:title, :body, :user_id, :category, :Priority, :date)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("title", $title);
+    $stmt->bindValue("body", $body);
+    $stmt->bindValue("user_id", $user_id);
+    $stmt->bindValue("category", $category);
+    $stmt->bindValue("Priority", $Priority);
+    $stmt->bindValue("date", $date);
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطا در ثبت سوال";
+    }
+}
+
+function get_questions()
+{
+    global $db;
+    $sql = "SELECT * FROM `question`";
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $questions = $stmt->fetchAll();
+    if (count($questions) === 0) {
+        return "فیلدی برای نمایش وجود ندارد!!";
+    } else {
+        return $questions;
+    }
+}
+
+function add_answer($question_id, $user_id, $body)
+{
+    global $db;
+
+    $date = time();
+    $sql = "INSERT INTO `answer`( `question_id`, `user_id`, `body`, `date`) 
+VALUES (:question_id,:user_id,:body,:date)";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("question_id", $question_id);
+    $stmt->bindValue("user_id", $user_id);
+    $stmt->bindValue("body", $body);
+    $stmt->bindValue("date", $date);
+    if ($stmt->execute()) {
+        return true;
+    } else {
+        return "خطا در ثبت پاسخ";
+    }
+}
+
+function get_answers($question_id)
+{
+    global $db;
+    $sql = "SELECT * FROM `answer` WHERE `question_id`=:question_id ORDER BY `id` DESC";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("question_id", $question_id);
+    $stmt->execute();
+    $answers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $answers;
+}
+
+function get_question_by_question_id($question_id)
+{
+    global $db;
+    $sql = "SELECT * FROM `question` WHERE `id` = :question_id";
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue("question_id", $question_id);
+    $stmt->execute();
+    $question = $stmt->fetch(PDO::FETCH_ASSOC);
+    if ($question === false) {
+        return null;
+    } else {
+        return $question;
+    }
+}
 
 function motivational_sentence()
 {

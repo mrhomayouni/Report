@@ -74,7 +74,7 @@ if ($is_admin) {
             foreach ($vacations as $vacation) { ?>
                 <tr style="background-color:
                 <?php if ($vacation["status"] === 0) { ?> #decf2a
-                <?php } elseif ($vacation["status"] === 1) { ?> #40e612
+                <?php } elseif ($vacation["status"] === 1) { ?> #54cf2b
                 <?php } elseif ($vacation["status"] === 2) { ?> #de2a2a
                 <?php } elseif ($vacation["status"] === 3) { ?> #42e9f5 <?php }
                 ?>
@@ -132,7 +132,7 @@ if ($is_admin) {
             <div class="mb-3 col-4">
                 <label for="date-picker1" class="form-label">تاریخ <font color="red">*</font></label>
                 <input name="date" id="date-picker1" type="text" class="form-control date-picker" required=""
-                        value="<?= date("y/m/d") ?>">
+                       value="<?= date("y/m/d") ?>">
             </div>
             <div class="mb-3 col-4">
                 <label class="form-label">نوع <font color="red">*</font></label>
