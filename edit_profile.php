@@ -6,6 +6,7 @@ if (isset($_POST["submit"], $_POST["username"], $_POST["first_name"], $_POST["la
     $username = trim($_POST["username"]);
     $first_name = trim($_POST["first_name"]);
     $last_name = trim($_POST["last_name"]);
+
     if ($username === "" || $first_name === "" || $last_name === "") {
         $ok = "خطا!!فیلد خالی مجاز نیست";
     } elseif (change_Specifications($user["id"], $username, $first_name, $last_name)) {
@@ -14,9 +15,11 @@ if (isset($_POST["submit"], $_POST["username"], $_POST["first_name"], $_POST["la
         $ok = "خطا!!مشکلی در ویرایش اطلاعات به وجود امده است";
     }
 }
+
 if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_password"])) {
     $new_password = trim($_POST["new_password"]);
     $new_password_repeat = trim($_POST["repeat_new_password"]);
+
     if ($new_password === "" || $new_password_repeat === "") {
         $change_password = "خطا!! رمز عبور یا تکرار رمز عبور خالی است.";
     } elseif ($new_password !== $new_password_repeat) {
@@ -45,8 +48,7 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
             <div class="alert alert-success" role="alert">
                 مشخصات با موفقیت تغییر کرد
             </div>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+        <?php }elseif (isset($ok) && $ok !== true) { ?>
             <div class="alert alert-warning" role="alert">
                 <?= $ok ?>
             </div>
@@ -79,8 +81,7 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
             <div class="alert alert-success" role="alert">
                 رمز عبور با موفقیت تغییر کرد
             </div>
-        <?php } ?>
-        <?php if (isset($change_password) && $change_password !== true) { ?>
+        <?php }elseif (isset($change_password) && $change_password !== true) { ?>
             <div class="alert alert-warning" role="alert">
                 <?= $change_password ?>
             </div>

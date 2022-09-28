@@ -1,6 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
 
 require "db.php";
 
@@ -8,15 +7,15 @@ session_start();
 
 date_default_timezone_set('asia/tehran');
 
-#[NoReturn] function redirect($path)
+function redirect(string $path): never
 {
     header("Location:" . $path);
     exit();
 }
 
-function Is_File0($path)
+function check_page(string $path): bool
 {
-    if (basename($_SERVER["SCRIPT_NAME"]) === $path) return true;
+    return basename($_SERVER["SCRIPT_NAME"] === $path);
 }
 
 function get_user_by_password(string $username, string $password): ?array
@@ -46,7 +45,7 @@ function get_user_by_id(int $id): ?array
     else return $user;
 }
 
-function add_reports($user_id, $time_starts, $time_ends, $time_teaches, $descriptions)
+function add_reports(int $user_id, array $time_starts, array $time_ends, array $time_teaches, array $descriptions): bool|string
 {
     $time_starts_count = count($time_starts);
     $time_ends_count = count($time_ends);
@@ -57,12 +56,15 @@ function add_reports($user_id, $time_starts, $time_ends, $time_teaches, $descrip
     foreach ($time_starts as $i => $time_start) {
         if (!isset($time_start, $time_ends[$i], $time_teaches[$i], $time_teaches[$i])) continue;
         if (trim($time_start) === "" || trim($time_ends[$i]) === "" || trim($time_teaches[$i]) === "" || trim($descriptions[$i] === "")) return "خطا!!فیلد خالی مجاز نیست.";
+
         add_report($user_id, $time_start, $time_ends[$i], $time_teaches[$i], $descriptions[$i]);
+
         return true;
     }
+    return false;
 }
 
-function add_report($user_id, $time_start, $time_end, $time_teach, $description)
+function add_report(int $user_id, string $time_start, string $time_end, string $time_teach, string $description)
 {
     global $db;
 
@@ -79,7 +81,7 @@ function add_report($user_id, $time_start, $time_end, $time_teach, $description)
     $stmt->execute();
 }
 
-function add_to_archive($type, $description, $file_name)
+function add_to_archive(string $type, string $description, string $file_name): bool|string
 {
     global $db;
 
@@ -96,7 +98,7 @@ VALUES (:type,:file_name,:description);";
     }
 }
 
-function get_archives()
+function get_archives(): array
 {
     global $db;
 
@@ -104,14 +106,10 @@ function get_archives()
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $archives = $stmt->fetchAll();
-    if (count($archives) > 0) {
-        return $archives;
-    } else {
-        return false;
-    }
+    return $archives;
 }
 
-function change_Specifications($user_id, $username, $first_name, $last_name)
+function change_Specifications(int $user_id, string $username, string $first_name, string $last_name): bool
 {
     global $db;
 
@@ -121,12 +119,14 @@ function change_Specifications($user_id, $username, $first_name, $last_name)
     $stmt->bindValue("username", $username);
     $stmt->bindValue("first_name", $first_name);
     $stmt->bindValue("last_name", $last_name);
+
     if ($stmt->execute()) {
         return true;
     }
+    return false;
 }
 
-function change_password($user_id, $new_password): bool|string
+function change_password(int $user_id, string $new_password): bool|string
 {
     global $db;
 
@@ -134,14 +134,14 @@ function change_password($user_id, $new_password): bool|string
     $stmt = $db->prepare($sql);
     $stmt->bindValue("id", $user_id);
     $stmt->bindValue("new_password", md5($new_password));
+
     if ($stmt->execute()) {
         return true;
-    } else {
-        return "خطادر تغییر رمز عبور";
     }
+    return "خطادر تغییر رمز عبور";
 }
 
-function add_letter($type, $recipient, $title, $body): bool|string
+function add_letter(string $type, string $recipient, string $title, string $body): bool|string
 {
     global $db;
 
@@ -168,14 +168,10 @@ function get_letters(): bool|array
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $letter = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (count($letter) > 0) {
-        return $letter;
-    } else {
-        return false;
-    }
+    return $letter;
 }
 
-function get_letter_by_id($id)
+function get_letter_by_id(int $id)
 {
     global $db;
 
@@ -188,7 +184,7 @@ function get_letter_by_id($id)
 }
 
 
-function add_vacation($user_id, $date, $type, $duration, $description)
+function add_vacation( int $user_id, string $date, string $type, string $duration, string $description): bool|string
 {
     global $db;
 
@@ -210,7 +206,7 @@ VALUES (:user_id, :date, :type, :duration, :description, :created_at)";
     }
 }
 
-function get_all_vacation()
+function get_all_vacation(): bool|array
 {
     global $db;
 
@@ -218,14 +214,11 @@ function get_all_vacation()
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $vacation = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (count($vacation) < 1) {
-        return false;
-    } else {
-        return $vacation;
-    }
+    return $vacation;
+
 }
 
-function get_vacation($user_id)
+function get_vacation(int $user_id): bool|array
 {
     global $db;
 
@@ -234,14 +227,10 @@ function get_vacation($user_id)
     $stmt->bindValue("id", $user_id);
     $stmt->execute();
     $vacation = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    if (count($vacation) < 1) {
-        return false;
-    } else {
-        return $vacation;
-    }
+    return $vacation;
 }
 
-function change_vacation($id, $status)
+function change_vacation(int $id, int $status): void
 {
     global $db;
 
@@ -252,7 +241,7 @@ function change_vacation($id, $status)
     $stmt->execute();
 }
 
-function change_vacation_to_displayed()
+function change_vacation_to_displayed(): void
 {
     global $db;
     $sql = "UPDATE `vacation` SET `status` = 0 WHERE `status` = 3;";
@@ -260,7 +249,7 @@ function change_vacation_to_displayed()
     $stmt->execute();
 }
 
-function add_question_with_file($title, $body, $user_id, $category, $Priority, $file_name)
+function add_question_with_file(string $title, string $body, int $user_id, string $category, string $Priority, string $file_name): bool|string
 {
     global $db;
     $sql = "INSERT INTO `question`(`title`, `body`, `user_id`, `category`, `Priority`, `file_name`) 
@@ -279,7 +268,7 @@ VALUES (:title, :body, :user_id, :category, :Priority, :file_name)";
     }
 }
 
-function add_question_without_file($title, $body, $user_id, $category, $Priority)
+function add_question_without_file(string $title, string $body, int $user_id, string $category, string $Priority): bool|string
 {
     global $db;
 
@@ -300,21 +289,17 @@ VALUES (:title, :body, :user_id, :category, :Priority, :date)";
     }
 }
 
-function get_questions()
+function get_questions(): array
 {
     global $db;
     $sql = "SELECT * FROM `question`";
     $stmt = $db->prepare($sql);
     $stmt->execute();
     $questions = $stmt->fetchAll();
-    if (count($questions) === 0) {
-        return "فیلدی برای نمایش وجود ندارد!!";
-    } else {
-        return $questions;
-    }
+    return $questions;
 }
 
-function add_answer($question_id, $user_id, $body)
+function add_answer(int $question_id, int $user_id, string $body): bool|string
 {
     global $db;
 
@@ -333,7 +318,7 @@ VALUES (:question_id,:user_id,:body,:date)";
     }
 }
 
-function get_answers($question_id)
+function get_answers(int $question_id): array
 {
     global $db;
     $sql = "SELECT * FROM `answer` WHERE `question_id`=:question_id ORDER BY `id` DESC";
@@ -344,7 +329,7 @@ function get_answers($question_id)
     return $answers;
 }
 
-function get_question_by_question_id($question_id)
+function get_question_by_question_id(int $question_id): ?array
 {
     global $db;
     $sql = "SELECT * FROM `question` WHERE `id` = :question_id";
@@ -357,6 +342,63 @@ function get_question_by_question_id($question_id)
     } else {
         return $question;
     }
+}
+
+function gregorian_to_jalali(int $year, int $month, int $day): array
+{
+    $result = [];
+    $array = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
+
+    if ($year <= 1600) {
+        $year -= 621;
+        $result["year"] = 0;
+    } else {
+        $year -= 1600;
+        $result["year"] = 979;
+    }
+
+    $temp = ($year > 2) ? ($year + 1) : $year;
+    $days = ((int)(($temp + 3) / 4)) + (365 * $year) - ((int)(($temp + 99) / 100)) - 80 + $array[$month - 1] + ((int)(($temp + 399) / 400)) + $day;
+    $result["year"] += 33 * ((int)($days / 12053));
+    $days %= 12053;
+    $result["year"] += 4 * ((int)($days / 1461));
+    $days %= 1461;
+
+    if ($days > 365) {
+        $result["year"] += (int)(($days - 1) / 365);
+        $days = ($days - 1) % 365;
+    }
+
+    $result["month"] = ($days < 186)
+        ? 1 + (int)($days / 31)
+        : 7 + (int)(($days - 186) / 30);
+
+    $result["day"] = 1 + (($days < 186)
+            ? ($days % 31)
+            : (($days - 186) % 30));
+
+    return $result;
+}
+
+function gregorian_to_jalali_str(int $year, int $month, int $day): string
+{
+    $result = gregorian_to_jalali($year, $month, $day);
+
+    if ($result["month"] < 10)
+        $result["month"] = "0" . $result["month"];
+    if ($result["day"] < 10)
+        $result["day"] = "0" . $result["day"];
+
+    return $result["year"] . "/" . $result["month"] . "/" . $result["day"];
+}
+
+function return_date_to_jalali($timestamp): string
+{
+    $year = date("Y", $timestamp);
+    $month = date("m", $timestamp);
+    $day = date("d", $timestamp);
+    $date = gregorian_to_jalali_str($year, $month, $day);
+    return $date;
 }
 
 function motivational_sentence()

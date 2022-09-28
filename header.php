@@ -1,7 +1,6 @@
 <?php
 //require "load.php";
 ?>
-
 <!doctype html>
 <html lang="fa_IR" dir="rtl">
 <head>
@@ -185,7 +184,7 @@
         <a href="index.php"> <img class="mb-2" src="logo.png" alt="" width="100px"></a>
         <h3 class="display-5">
             سلام <?php
-            echo ($user["gender"] == 0) ? "اقای " : "خانم ";
+            echo ($user["gender"] === 0) ? "اقای " : "خانم ";
             echo $user["first_name"] . " " . $user["last_name"];
             ?>
             !</h3>
@@ -198,27 +197,30 @@
             </a>
             <?php if ($is_admin) { ?>
                 <a
-                        class="btn btn-primary <?php if (Is_File0("archive.php")) { ?> btn-warning <?php } ?> btn-sm"
+                        class="btn btn-primary <?php if (check_page("archive.php")) { ?> btn-warning <?php } ?> btn-sm"
                         href="archive.php"
                         role="button">بایگانی
-                </a> <?php } ?>
-            <a class="btn  btn-primary <?php if (Is_File0("add_reports.php")) { ?> btn-warning <?php } ?> btn-sm"
+                </a>
+                <a class="btn btn-primary <?php if (check_page("Letter.php")) { ?> btn-warning <?php } ?> btn-sm"
+                   href="Letter.php"
+                   role="button">نامه
+                </a>
+
+            <?php } ?>
+            <a class="btn  btn-primary <?php if (check_page("add_reports.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="add_reports.php"
                role="button">ثبت گزارش
             </a>
-            <a class="btn btn-primary <?php if (Is_File0("edit_profile.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn btn-primary <?php if (check_page("edit_profile.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="edit_profile.php"
                role="button">پروفایل
             </a>
-            <a class="btn btn-primary <?php if (Is_File0("Letter.php")) { ?> btn-warning <?php } ?> btn-sm"
-               href="Letter.php"
-               role="button">نامه
-            </a>
-            <a class="btn btn-primary <?php if (Is_File0("vacation.php")) { ?> btn-warning <?php } ?> btn-sm"
+
+            <a class="btn btn-primary <?php if (check_page("vacation.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="vacation.php"
                role="button">مرخصی
             </a>
-            <a class="btn btn-primary <?php if (Is_File0("questions.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn btn-primary <?php if (check_page("questions.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="questions.php"
                role="button">سوالات
             </a>

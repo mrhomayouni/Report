@@ -1,13 +1,12 @@
 <?php
 require "load.php";
 
-
-
-if (isset($_GET["id"])) {
-    $question_id = $_GET["id"];
-} else {
+if (!isset($_GET["id"])) {
     redirect("questions.php");
+} else {
+    $question_id = $_GET["id"];
 }
+
 $question = get_question_by_question_id($question_id);
 if ($question === null) {
     redirect("question.php");
@@ -25,12 +24,9 @@ if (isset($_POST["submit"], $_POST["description"])) {
         $ok = add_answer($question_id, $user["id"], $description);
     }
 }
+
 $answers = get_answers($question_id);
-
-
 ?>
-
-
 <!doctype html>
 <html lang="fa_IR" dir="rtl">
 <head>
@@ -47,7 +43,7 @@ $answers = get_answers($question_id);
     <br>
 
     <span class="badge bg-primary">  <?= $QUser["first_name"] . " " . $QUser["last_name"] ?> </span>
-    <span class="badge bg-warning ms-2"><?= date("y/m/d", $question["date"]) ?></span>
+    <span class="badge bg-warning ms-2"><?= return_date_to_jalali($question["date"]) ?></span>
     <!-- </div> -->
     <br>
     <p> <?= $question["body"] ?> </p>
@@ -70,7 +66,7 @@ $answers = get_answers($question_id);
                             $AUser = get_user_by_id($answer["user_id"]);
                             echo $AUser["first_name"] . " " . $AUser["last_name"]
                             ?> </b>
-                        در <?= date("y/m/d", $answer["date"]) ?> پاسخ می دهد:
+                        در <?= return_date_to_jalali($answer["date"]) ?> پاسخ می دهد:
                         <p style="margin-bottom: 0;"> <?= $answer["body"] ?> </p>
                     </div>
                 </div>
@@ -87,13 +83,11 @@ $answers = get_answers($question_id);
             <div class="alert alert-success" role="alert">
                 با موفقیت ثبت شد.
             </div>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+        <?php } elseif (isset($ok) && $ok !== true) { ?>
 
             <div class="alert alert-warning" role="alert">
                 <?= $ok ?>
             </div>
-
         <?php } ?>
 
         <div class="form-group mt-4">
@@ -117,4 +111,3 @@ $answers = get_answers($question_id);
         crossorigin="anonymous"></script>
 </body>
 </html>
-

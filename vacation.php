@@ -1,6 +1,7 @@
 <?php
 require "load.php";
 require "header.php";
+
 if (!isset($user)) {
     redirect("load.php");
 }
@@ -21,6 +22,7 @@ if (isset($_POST["submit"], $_POST["type"], $_POST["type"], $_POST["duration"], 
     $type = trim($_POST["type"]);
     $duration = trim($_POST["duration"]);
     $description = trim($_POST["description"]);
+
     if ($date === "" ||
         $type === "" ||
         $duration === "" ||
@@ -38,10 +40,7 @@ if ($is_admin) {
 } else {
     $vacations = get_vacation($user["id"]);
 }
-
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -68,7 +67,7 @@ if ($is_admin) {
         </tr>
         </thead>
         <tbody>
-        <?php if ($vacations === false) {
+        <?php if (count($vacations) < 1) {
             echo "فیلدی برای نمایش جود ندارد";
         } else {
             foreach ($vacations as $vacation) { ?>

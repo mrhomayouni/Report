@@ -1,6 +1,7 @@
 <?php
 require "load.php";
 require "header.php";
+
 if (isset($_POST["submit"])) {
     /*    var_dump($_POST);*/
     $type = trim($_POST["type"]);
@@ -15,6 +16,7 @@ if (isset($_POST["submit"])) {
         $ok = add_letter($type, $recipient, $title, $body);
     }
 }
+
 $letters = get_letters();
 ?>
 <!DOCTYPE html>
@@ -32,8 +34,7 @@ $letters = get_letters();
             <div class="alert alert-success" role="alert">
                 با موفقیت ثبت شد.
             </div>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+        <?php } elseif (isset($ok) && $ok !== true) { ?>
 
             <div class="alert alert-warning" role="alert">
                 <?= $ok ?>
@@ -86,7 +87,7 @@ $letters = get_letters();
         </tr>
         </thead>
         <tbody>
-        <?php if ($letters === false) { ?>
+        <?php if (count($letters) < 1) { ?>
             <div> داده ای برای نمایش وجود ندارد</div>
 
         <?php } else { ?>
@@ -107,13 +108,12 @@ $letters = get_letters();
                                 <?= $letter["annex"] ?>
                             <?php } ?>
                         </a></td>
-                    <td><?= date("y-m-d<->h:i", $letter["date"]) ?></td>
+                    <td><?= return_date_to_jalali($letter["date"]); ?></td>
                     <td><a href="letter_print.php?id=<?= $letter["id"] ?>">مشاهده</a></td>
                 </tr>
             <?php }
         } ?>
         </tbody>
     </table>
-
 </main>
 </body>

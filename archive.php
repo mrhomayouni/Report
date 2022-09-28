@@ -1,15 +1,15 @@
 <?php
 require "load.php";
-
 require "header.php";
 
-if (!$is_admin) redirect("index.php");
+/*if (!$is_admin) redirect("index.php");*/
 if (isset($_POST["submit_arc"], $_POST["type"], $_POST["description"])) {
     if ($_FILES["file"]["name"] === "") {
         $ok = "خطا!! فایلی انتخاب نشده است";
     } else {
         $type = $_POST["type"];
         $description = trim($_POST["description"]);
+
         $file_name = rand(100000, 999999) . rand(100000, 999999) . $_FILES["file"]["name"];
         $file_path = "files/" . $file_name;
         if ($type === "" || $description === "") {
@@ -19,9 +19,9 @@ if (isset($_POST["submit_arc"], $_POST["type"], $_POST["description"])) {
         } else {
             $ok = "خطایی در آپلود فایل یه وجود امده است";
         }
-
     }
 }
+
 $files = get_archives();
 ?>
 <!DOCTYPE html>
@@ -43,8 +43,7 @@ $files = get_archives();
                     <div class="alert alert-success" role="alert">
                         با موفقیت ثبت شد.
                     </div>
-                <?php } ?>
-                <?php if (isset($ok) && $ok !== true) { ?>
+                <?php } elseif (isset($ok) && $ok !== true) { ?>
 
                     <div class="alert alert-warning" role="alert">
                         <?= $ok ?>
@@ -82,13 +81,11 @@ $files = get_archives();
             <th scope="col">توضیح</th>
             <th scope="col">پیوست</th>
             <th scope="col">مدیریت</th>
-
         </tr>
         </thead>
         <tbody>
-        <?php if ($files === false) { ?>
+        <?php if (count($files) < 1) { ?>
             <div> داده ای برای نمایش وجود ندارد</div>
-
         <?php } else { ?>
             <?php foreach ($files as $file) { ?>
                 <tr>

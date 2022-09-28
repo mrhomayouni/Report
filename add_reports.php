@@ -6,14 +6,16 @@ if (!isset($_SESSION["user_id"])) {
     redirect("login.php");
 }
 if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["time_teach"], $_POST["description"])
-    and is_array(["time_start"]) &&
+    && is_array(["time_start"]) &&
     is_array($_POST["time_end"]) &&
     is_array($_POST["time_teach"]) &&
     is_array($_POST["description"])) {
+
     $time_starts = $_POST["time_start"];
     $time_ends = $_POST["time_end"];
     $time_teaches = $_POST["time_teach"];
     $descriptions = $_POST["description"];
+
     $ok = add_reports($user["id"], $time_starts, $time_ends, $time_teaches, $descriptions);
 }
 ?>
@@ -32,14 +34,13 @@ if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["ti
             <div class="alert alert-success" role="alert">
                 گزارش با موفقیت ثبت شد.
             </div>
-            <?php if (isset($ok) && $ok !== true) { ?>
+        <?php } elseif (isset($ok) && $ok !== true) { ?>
 
-                <div class="alert alert-warning" role="alert">
-                    <?php echo $ok ?>
-                </div>
+            <div class="alert alert-warning" role="alert">
+                <?php echo $ok ?>
+            </div>
 
-            <?php }
-        } ?>
+        <?php } ?>
 
 
         <div class="reports"></div>

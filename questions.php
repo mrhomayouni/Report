@@ -7,12 +7,14 @@ if (isset($_POST["type"], $_POST["title"], $_POST["description"], $_POST["priori
     $title = $_POST["title"];
     $description = $_POST["description"];
     $priority = $_POST["priority"];
+
     if ($type === "" || $title === "" || $description === "") {
         $ok = "خطا !! فیلد خالی مجاز نیست";
     } else {
         if (isset($_FILES["file"]) && $_FILES["file"]["name"] !== "") {
             $file_name = rand(1000, 9999) . rand(1000, 9999) . $_FILES["file"]["name"];
             $file_path = "question/" . $file_name;
+
             if (move_uploaded_file($_FILES["file"]["tmp_name"], $file_path)) {
                 $ok = add_question_with_file($title, $description, $user["id"], $type, $priority, $file_name);
             } else {
@@ -25,9 +27,7 @@ if (isset($_POST["type"], $_POST["title"], $_POST["description"], $_POST["priori
 }
 
 $questions = get_questions();
-
 ?>
-
 <!doctype html>
 <html lang="fa_IR" dir="rtl">
 <head>
@@ -44,8 +44,7 @@ $questions = get_questions();
             <div class="alert alert-success" role="alert">
                 با موفقیت ثبت شد.
             </div>
-        <?php } ?>
-        <?php if (isset($ok) && $ok !== true) { ?>
+        <?php } elseif (isset($ok) && $ok !== true) { ?>
 
             <div class="alert alert-warning" role="alert">
                 <?= $ok ?>
@@ -102,34 +101,35 @@ $questions = get_questions();
         </tr>
         </thead>
         <tbody>
-        <?php foreach ($questions as $question) {
-            $answer_count = count(get_answers($question["id"]));
-            ?>
-
-            <tr>
-                <td>
-                    <b> <?php $person = get_user_by_id($question["user_id"]);
-                        echo $person["first_name"] . " " . $person["last_name"] ?> </b>
-                    می پرسد:
-                    <b>
-                        <a style="color: inherit; text-decoration: none;" href="question.php?id=<?= $question["id"] ?>">
-                            <?= $question["title"] ?> </a>
-                    </b>
-                    <br>
-                    <?= $question["body"] ?>
-                </td>
-                <td>
+        <?php
+            foreach ($questions as $question) {
+                $answer_count = count(get_answers($question["id"]));
+                ?>
+                <tr>
+                    <td>
+                        <b> <?php $person = get_user_by_id($question["user_id"]);
+                            echo $person["first_name"] . " " . $person["last_name"] ?> </b>
+                        می پرسد:
+                        <b>
+                            <a style="color: inherit; text-decoration: none;"
+                               href="question.php?id=<?= $question["id"] ?>">
+                                <?= $question["title"] ?> </a>
+                        </b>
+                        <br>
+                        <?= $question["body"] ?>
+                    </td>
+                    <td>
                     <span class="badge <?= ($question["status"] === 0) ? "bg-warning" : "bg-success"; ?>">
                         <?= ($question["status"] === 0) ? "حل نشده" : "حل شده"; ?>
                     </span>
-                </td>
-                <td>
+                    </td>
+                    <td>
             <span class="badge bg-primary">
                 <?= $answer_count ?>
             </span>
-                </td>
-            </tr>
-        <?php } ?>
+                    </td>
+                </tr>
+            <?php } ?>
 
         <br>
         </tbody>

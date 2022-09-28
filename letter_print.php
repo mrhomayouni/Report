@@ -4,8 +4,6 @@ require "load.php";
 $id = $_GET["id"];
 $letter = get_letter_by_id($id);
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
