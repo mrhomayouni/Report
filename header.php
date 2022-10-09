@@ -197,30 +197,30 @@
             </a>
             <?php if ($is_admin) { ?>
                 <a
-                        class="btn btn-primary <?php if (check_page("archive.php")) { ?> btn-warning <?php } ?> btn-sm"
+                        class="btn btn-primary <?php if (check_page("/Report/archive.php")) { ?> btn-warning <?php } ?> btn-sm"
                         href="archive.php"
                         role="button">بایگانی
                 </a>
-                <a class="btn btn-primary <?php if (check_page("Letter.php")) { ?> btn-warning <?php } ?> btn-sm"
+                <a class="btn btn-primary <?php if (check_page("/Report/Letter.php")) { ?> btn-warning <?php } ?> btn-sm"
                    href="Letter.php"
                    role="button">نامه
                 </a>
 
             <?php } ?>
-            <a class="btn  btn-primary <?php if (check_page("add_reports.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn  btn-primary <?php if (check_page("/Report/add_reports.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="add_reports.php"
                role="button">ثبت گزارش
             </a>
-            <a class="btn btn-primary <?php if (check_page("edit_profile.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn btn-primary <?php if (check_page("/Report/edit_profile.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="edit_profile.php"
                role="button">پروفایل
             </a>
 
-            <a class="btn btn-primary <?php if (check_page("vacation.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn btn-primary <?php if (check_page("/Report/vacation.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="vacation.php"
                role="button">مرخصی
             </a>
-            <a class="btn btn-primary <?php if (check_page("questions.php")) { ?> btn-warning <?php } ?> btn-sm"
+            <a class="btn btn-primary <?php if (check_page("/Report/questions.php")) { ?> btn-warning <?php } ?> btn-sm"
                href="questions.php"
                role="button">سوالات
             </a>

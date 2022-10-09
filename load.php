@@ -15,7 +15,7 @@ function redirect(string $path): never
 
 function check_page(string $path): bool
 {
-    return basename($_SERVER["SCRIPT_NAME"] === $path);
+    return basename($_SERVER["SCRIPT_NAME"] == $path);
 }
 
 function get_user_by_password(string $username, string $password): ?array
