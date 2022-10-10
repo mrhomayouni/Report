@@ -34,7 +34,6 @@ $questions = get_questions();
     <meta charset="UTF-8">
     <title>کارمن - سوالات</title>
 </head>
-</head>
 <body>
 <main class="container">
     <form action="" method="POST" enctype="multipart/form-data" onsubmit="return send(this);">

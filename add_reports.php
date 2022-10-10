@@ -5,6 +5,7 @@ require "header.php";
 if (!isset($_SESSION["user_id"])) {
     redirect("login.php");
 }
+
 if (isset($_POST["submit"], $_POST["time_start"], $_POST["time_end"], $_POST["time_teach"], $_POST["description"])
     && is_array(["time_start"]) &&
     is_array($_POST["time_end"]) &&

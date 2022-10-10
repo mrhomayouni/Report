@@ -3,11 +3,16 @@ require "load.php";
 
 if (!isset($_GET["id"])) {
     redirect("questions.php");
-} else {
-    $question_id = $_GET["id"];
 }
 
+if(!isset($_GET["id"]))
+{
+    redirect("questions.php");
+}
+
+$question_id = $_GET["id"];
 $question = get_question_by_question_id($question_id);
+
 if ($question === null) {
     redirect("question.php");
 }

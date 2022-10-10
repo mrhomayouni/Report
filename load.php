@@ -7,7 +7,7 @@ session_start();
 
 date_default_timezone_set('asia/tehran');
 
-function redirect(string $path): never
+function redirect($path)
 {
     header("Location:" . $path);
     exit();
@@ -180,11 +180,15 @@ function get_letter_by_id(int $id)
     $stmt->bindValue("id", $id);
     $stmt->execute();
     $letter = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if ($letter === false) {
+        return null;
+    }
     return $letter;
 }
 
 
-function add_vacation( int $user_id, string $date, string $type, string $duration, string $description): bool|string
+function add_vacation(int $user_id, string $date, string $type, string $duration, string $description): bool|string
 {
     global $db;
 

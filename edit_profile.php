@@ -28,8 +28,6 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
         $change_password = "خطا!!رمزعبور باید حداقل 6 کاراکتر باشد.";
     } elseif (change_password($user["id"], $new_password)) {
         $change_password = true;
-    } else {
-        $change_password = change_password($user["id"], $new_password);
     }
 }
 ?>
@@ -48,7 +46,7 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
             <div class="alert alert-success" role="alert">
                 مشخصات با موفقیت تغییر کرد
             </div>
-        <?php }elseif (isset($ok) && $ok !== true) { ?>
+        <?php } elseif (isset($ok) && $ok !== true) { ?>
             <div class="alert alert-warning" role="alert">
                 <?= $ok ?>
             </div>
@@ -81,7 +79,7 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
             <div class="alert alert-success" role="alert">
                 رمز عبور با موفقیت تغییر کرد
             </div>
-        <?php }elseif (isset($change_password) && $change_password !== true) { ?>
+        <?php } elseif (isset($change_password) && $change_password !== true) { ?>
             <div class="alert alert-warning" role="alert">
                 <?= $change_password ?>
             </div>

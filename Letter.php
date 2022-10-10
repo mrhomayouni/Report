@@ -3,7 +3,6 @@ require "load.php";
 require "header.php";
 
 if (isset($_POST["submit"])) {
-    /*    var_dump($_POST);*/
     $type = trim($_POST["type"]);
     $recipient = trim($_POST["recipient"]);
     $title = trim($_POST["title"]);

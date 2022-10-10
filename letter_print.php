@@ -1,8 +1,15 @@
 <?php
 require "load.php";
 
+if (!isset($_GET["id"])) {
+    redirect("letter.php");
+}
 $id = $_GET["id"];
 $letter = get_letter_by_id($id);
+
+if ($letter === null) {
+    redirect("letter.php");
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,7 +26,6 @@ $letter = get_letter_by_id($id);
           integrity="sha384-+4j30LffJ4tgIMrq9CwHvn0NjEvmuDCOfk6Rpg2xg7zgOxWWtLtozDEEVvBPgHqE" crossorigin="anonymous">
 </head>
 <body style="direction: rtl">
-
 <span style=""><img src="logo.png" width="200"> </span>
 
 <div style="margin-right: 83rem;margin-top:-180px">

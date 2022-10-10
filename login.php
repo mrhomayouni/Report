@@ -16,10 +16,7 @@ if (isset($_POST["submit"], $_POST["username"], $_POST["password"])) {
         redirect("index.php");
     }
 }
-
 ?>
-
-
 <!doctype html>
 <html lang="fa_IR" dir="rtl">
 <head>
