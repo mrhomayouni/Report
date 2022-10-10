@@ -28,6 +28,8 @@ if (isset($_POST["change_password"], $_POST["new_password"], $_POST["repeat_new_
         $change_password = "خطا!!رمزعبور باید حداقل 6 کاراکتر باشد.";
     } elseif (change_password($user["id"], $new_password)) {
         $change_password = true;
+    }else {
+        $change_password = "خطا!!مشکلی به وجود امده است";
     }
 }
 ?>
